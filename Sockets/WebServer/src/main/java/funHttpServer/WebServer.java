@@ -232,12 +232,29 @@ class WebServer {
             Map<String, String> query_pairs = new LinkedHashMap<String, String>();
             query_pairs = splitQuery(request.replace("github?", ""));
             String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-            System.out.println(json);
+
+            json = json.substring(1, json.length() - 1); // Remove []
+            String[] blocks = json.split("\\},\\{");  // Break into blocks
+            StringBuilder result = new StringBuilder();
+
+            // Parse the json
+            for (String block : blocks) {
+              String[] pairs = block.split(",");
+              for (String pair : pairs) {
+                
+                if (pair.contains("full_name") || 
+                (pair.contains("id") && !pair.contains("node_id") && !pair.contains("gravatar_id") && !pair.contains("gist_id") && !pair.contains("key_id")) 
+                || pair.contains("login") && !pair.contains("releases_url")) {
+                  result.append(pair + "==");
+                }
+              }
+            }
+
   
             builder.append("HTTP/1.1 200 OK\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
-            builder.append(json);
+            builder.append(result);
 
           } catch (Exception e) {
             builder.append("HTTP/1.1 500 Internal Server Error\n");
@@ -262,7 +279,7 @@ class WebServer {
             if (data == "" || data == null) {
               throw new Exception("Nothing to decrypt.");
             }
-            
+            data = data.toLowerCase();
             StringBuilder result = new StringBuilder();
             for (char c : data.toCharArray()) {
               if (Character.isLetter(c)) {
@@ -309,7 +326,7 @@ class WebServer {
             if (data == "" || data == null) {
               throw new Exception("Nothing to encrypt.");
             }
-            
+            data = data.toLowerCase();
             StringBuilder result = new StringBuilder();
             for (char c : data.toCharArray()) {
               if (Character.isLetter(c)) {

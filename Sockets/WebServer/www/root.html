@@ -8,8 +8,21 @@
 			<li>/file/sample.html -- returns the content of the file sample.html</li>
 			<li>/json -- returns a json of the /random request</a></li>
 			<li>/random -- returns index.html</a></li>
+			<li>/multiply -- returns two given values multiplied together</a></li>
+			<ul>
+				<li>Parameters: num1=int, num2=int</li>
+				<li>Example: /multiply?num1=5&num2=10</li>
+			</ul>
 			<li>/encrypt -- encrypts a given string with a given key</a></li>
+			<ul>
+				<li>Parameters: data=string, key=string</li>
+				<li>Example: /encrypt?data=hello&key=world</li>
+			</ul>
 			<li>/decrypt -- decrypts a given string with a given key</a></li>
+			<ul>
+				<li>Parameters: data=string, key=string</li>
+				<li>Example: /decrypt?data=nkrru&key=world</li>
+			</ul>
 		</ul>
 		<h3>File Structure in www (you can use /file/www/FILENAME):</h3>
 		${links}
