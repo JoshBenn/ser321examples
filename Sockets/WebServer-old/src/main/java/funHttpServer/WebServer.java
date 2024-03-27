@@ -61,6 +61,7 @@ class WebServer {
         try {
           server.close();
         } catch (IOException e) {
+          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -200,25 +201,21 @@ class WebServer {
           // extract path parameters
           query_pairs = splitQuery(request.replace("multiply?", ""));
 
-          try {
-            // extract required fields from parameters
-            Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-            Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+          // extract required fields from parameters
+          Integer num1 = Integer.parseInt(query_pairs.get("num1"));
+          Integer num2 = Integer.parseInt(query_pairs.get("num2"));
 
-            // do math
-            Integer result = num1 * num2;
+          // do math
+          Integer result = num1 * num2;
 
-            // Generate response
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append("Result is: " + result);
-          } catch (Exception e) {
-            builder.append("HTTP/1.1 400 Bad Request\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append("Error: Invalid input or missing parameters.");
-          }
+          // Generate response
+          builder.append("HTTP/1.1 200 OK\n");
+          builder.append("Content-Type: text/html; charset=utf-8\n");
+          builder.append("\n");
+          builder.append("Result is: " + result);
+
+          // TODO: Include error handling here with a correct error code and
+          // a response that makes sense
 
         } else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
@@ -228,111 +225,18 @@ class WebServer {
           //     then drill down to what you care about
           // "Owner's repo is named RepoName. Example: find RepoName's contributors" translates to
           //     "/repos/OWNERNAME/REPONAME/contributors"
-          try {
-            Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-            query_pairs = splitQuery(request.replace("github?", ""));
-            String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-            System.out.println(json);
-  
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append(json);
 
-          } catch (Exception e) {
-            builder.append("HTTP/1.1 500 Internal Server Error\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append("Could not process request.");
-          }
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          query_pairs = splitQuery(request.replace("github?", ""));
+          String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+          System.out.println(json);
 
-
-        } else if (request.contains("encrypt?")) {
-          try {
-            Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-            query_pairs = splitQuery(request.replace("encrypt?", ""));
-            String data = query_pairs.get("data");
-            String key = query_pairs.get("key");
-
-            if (key == "" || key == null) {
-              throw new Exception("Key cannot be empty.");
-            }
-            int shift = key.chars().sum() % 26;
-
-            if (data == "" || data == null) {
-              throw new Exception("Nothing to decrypt.");
-            }
-            
-            StringBuilder result = new StringBuilder();
-            for (char c : data.toCharArray()) {
-              if (Character.isLetter(c)) {
-                char base = (Character.isUpperCase(c) ? 'A' : 'a' );
-                char shifted = (char) ((c - base + shift) % 26 + base);
-                result.append(shifted);
-              } else {
-                result.append(c);
-              }
-            }
-
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append(result);
-
-          } catch (Exception e) {
-            builder.append("HTTP/1.1 400 Bad Request\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append(e);
-          }
-
-
-        } else if (request.contains("decrypt?")) {
-          // pulls the query from the request and runs it with GitHub's REST API
-          // check out https://docs.github.com/rest/reference/
-          //
-          // HINT: REST is organized by nesting topics. Figure out the biggest one first,
-          //     then drill down to what you care about
-          // "Owner's repo is named RepoName. Example: find RepoName's contributors" translates to
-          //     "/repos/OWNERNAME/REPONAME/contributors"
-          try {
-            Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-            query_pairs = splitQuery(request.replace("decrypt?", ""));
-            String data = query_pairs.get("data");
-            String key = query_pairs.get("key");
-
-            if (key == "" || key == null) {
-              throw new Exception("Key cannot be empty.");
-            }
-
-            int shift = 26 - key.chars().sum() % 26;
-            if (data == "" || data == null) {
-              throw new Exception("Nothing to encrypt.");
-            }
-            
-            StringBuilder result = new StringBuilder();
-            for (char c : data.toCharArray()) {
-              if (Character.isLetter(c)) {
-                char base = (Character.isUpperCase(c) ? 'A' : 'a' );
-                char shifted = (char) ((c - base + shift) % 26 + base);
-                result.append(shifted);
-              } else {
-                result.append(c);
-              }
-            }
-
-            builder.append("HTTP/1.1 200 OK\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append(result);
-
-          } catch (Exception e) {
-            builder.append("HTTP/1.1 400 Bad Request\n");
-            builder.append("Content-Type: text/html; charset=utf-8\n");
-            builder.append("\n");
-            builder.append(e);
-          }
-
+          builder.append("HTTP/1.1 200 OK\n");
+          builder.append("Content-Type: text/html; charset=utf-8\n");
+          builder.append("\n");
+          builder.append("Check the todos mentioned in the Java source file");
+          // TODO: Parse the JSON returned by your fetch and create an appropriate
+          // response based on what the assignment document asks for
 
         } else {
           // if the request is not recognized at all
